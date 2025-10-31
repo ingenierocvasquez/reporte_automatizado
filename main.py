@@ -14,7 +14,7 @@ def enviar_correo_con_texto(mensaje):
     msg['To'] = os.environ.get("EMAIL_TO")
     msg.set_content(mensaje)
 
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+    with smtplib.SMTP_SSL('smtp.ingenierocvasquez.com', 465) as smtp:
         smtp.login(os.environ.get("EMAIL_USER"), os.environ.get("EMAIL_PASS"))
         smtp.send_message(msg)
 
