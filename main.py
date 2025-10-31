@@ -15,7 +15,8 @@ def enviar_correo_con_texto(mensaje):
     msg.set_content(mensaje)
 
     try:
-        with smtplib.SMTP_SSL('smtp.ingenierocvasquez.com', 465) as smtp:
+        with smtplib.SMTP('smtp.ingenierocvasquez.com', 25) as smtp:
+            smtp.starttls()
             smtp.login(os.environ.get("EMAIL_USER"), os.environ.get("EMAIL_PASS"))
             smtp.send_message(msg)
             print("📨 Correo enviado correctamente.")
