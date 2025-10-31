@@ -14,9 +14,15 @@ def enviar_correo_con_texto(mensaje):
     msg['To'] = os.environ.get("EMAIL_TO")
     msg.set_content(mensaje)
 
-    with smtplib.SMTP_SSL('smtp.ingenierocvasquez.com', 465) as smtp:
-        smtp.login(os.environ.get("EMAIL_USER"), os.environ.get("EMAIL_PASS"))
-        smtp.send_message(msg)
+    try:
+        with smtplib.SMTP_SSL('smtp.ingenierocvasquez.com', 465) as smtp:
+            smtp.login(os.environ.get("EMAIL_USER"), os.environ.get("EMAIL_PASS"))
+            smtp.send_message(msg)
+            print("📨 Correo enviado correctamente.")
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"❌ Error de autenticación SMTP: {e}")
+    except Exception as e:
+        print(f"❌ Error al enviar el correo: {e}")
 
 def entry_point():
     cursos = []
@@ -24,12 +30,19 @@ def entry_point():
     mensaje_correo = f"🎓 *Cursos disponibles extraídos automáticamente* ({dt.datetime.now().strftime('%d-%m-%Y %H:%M')})\n\n"
 
     for pagina in range(1, 6):
-        url = f"https://www.cursosdev.com/coupons/Spanish?page={pagina}"
+        url = f"https://cursosdev.com/coupons/Spanish?page={pagina}"
         headers = {
             "user-agent": "Mozilla/5.0"
         }
 
-        respuesta = requests.get(url, headers=headers, timeout=30)
+        try:
+            respuesta = requests.get(url, headers=headers, timeout=30)
+            respuesta.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            print(f"⚠️ No se pudo acceder a {url}: {e}")
+            mensaje_correo += f"⚠️ Página {pagina}: error de conexión.\n\n"
+            continue
+
         parser = html.fromstring(respuesta.text)
         tarjetas = parser.xpath("//div[contains(@class, 'transition-transform')]")
         mensaje_correo += f"📚 Página {pagina}:\n"
