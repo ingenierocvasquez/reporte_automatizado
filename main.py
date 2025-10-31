@@ -15,8 +15,10 @@ def enviar_correo_con_texto(mensaje):
     msg.set_content(mensaje)
 
     try:
-        with smtplib.SMTP('smtp.ingenierocvasquez.com', 25) as smtp:
+        with smtplib.SMTP('smtp.ingenierocvasquez.com', 587) as smtp:
+            smtp.ehlo()
             smtp.starttls()
+            smtp.ehlo()
             smtp.login(os.environ.get("EMAIL_USER"), os.environ.get("EMAIL_PASS"))
             smtp.send_message(msg)
             print("📨 Correo enviado correctamente.")
@@ -72,6 +74,9 @@ def entry_point():
                 f"   🔗 [{contador}] Enlace: {enlace[0].strip()}\n\n"
             )
             contador += 1
+
+    if contador == 1:
+        mensaje_correo += "⚠️ No se encontraron cursos disponibles en ninguna página.\n"
 
     enviar_correo_con_texto(mensaje_correo)
 
