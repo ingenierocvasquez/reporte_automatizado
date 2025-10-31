@@ -29,7 +29,7 @@ def entry_point():
             "user-agent": "Mozilla/5.0"
         }
 
-        respuesta = requests.get(url, headers=headers, timeout=10)
+        respuesta = requests.get(url, headers=headers, timeout=30)
         parser = html.fromstring(respuesta.text)
         tarjetas = parser.xpath("//div[contains(@class, 'transition-transform')]")
         mensaje_correo += f"📚 Página {pagina}:\n"
