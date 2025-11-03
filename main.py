@@ -1,15 +1,17 @@
 import requests
 from lxml import html
 import os
-import datetime as dt
 import smtplib
 from email.message import EmailMessage
+from datetime import datetime
+import pytz  # Asegúrate de tener instalado pytz: pip install pytz
 
 CHULO_VERDE = '✅'
+ZONA_HORARIA = pytz.timezone('America/Bogota')
 
-def enviar_correo_con_texto(mensaje):
+def enviar_correo_con_texto(mensaje, fecha_generacion):
     msg = EmailMessage()
-    msg['Subject'] = '🎓 Cursos disponibles - Reporte automático'
+    msg['Subject'] = f'🎓 Cursos disponibles - {fecha_generacion.strftime("%d-%m-%Y %H:%M")}'
     msg['From'] = os.environ.get("EMAIL_USER")
     msg['To'] = os.environ.get("EMAIL_TO")
     msg.set_content(mensaje)
@@ -30,7 +32,8 @@ def enviar_correo_con_texto(mensaje):
 def entry_point():
     cursos = []
     contador = 1
-    mensaje_correo = f"🎓 *Cursos disponibles extraídos automáticamente* ({dt.datetime.now().strftime('%d-%m-%Y %H:%M')})\n\n"
+    ahora_bogota = datetime.now(ZONA_HORARIA)
+    mensaje_correo = f"🎓 *Cursos disponibles extraídos automáticamente* ({ahora_bogota.strftime('%d-%m-%Y %H:%M')})\n\n"
 
     for pagina in range(1, 6):
         url = f"https://cursosdev.com/coupons/Spanish?page={pagina}"
@@ -78,7 +81,7 @@ def entry_point():
     if contador == 1:
         mensaje_correo += "⚠️ No se encontraron cursos disponibles en ninguna página.\n"
 
-    enviar_correo_con_texto(mensaje_correo)
+    enviar_correo_con_texto(mensaje_correo, ahora_bogota)
 
 if __name__ == "__main__":
     entry_point()
