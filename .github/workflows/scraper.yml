@@ -2,7 +2,7 @@ name: Cursos cada 6 horas
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Ejecuta cada 6 horas
+    - cron: '0 */12 * * *'  # Ejecuta cada 12 horas
   workflow_dispatch:
 
 jobs:
