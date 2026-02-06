@@ -1,4 +1,4 @@
-name: Cursos cada 6 horas
+name: Cursos cada 12 horas
 
 on:
   schedule:
